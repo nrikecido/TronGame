@@ -14,23 +14,41 @@ class TronGame{
         this.player1 = {
             x: 20,
             y: 20,
-            width: 20,
-            height: 20,
+            width: 10,
+            height: 10,
             color: {r: 227, g: 118, b: 30}
         };
         
         this.player2 = {
             x: 80,
             y: 80,
-            width: 20,
-            height: 20,
+            width: 10,
+            height: 10,
             color: {r: 36, g: 7, b: 183}
         };
 
         this.config = {
-            speed: 10,
+            speed: 2,
             death: false,
         }
+
+        this.startGameLoop();
+    }
+
+    startGameLoop() {
+        const gameLoop = () => {
+        
+            this.move_player1();
+            this.move_player2();
+            // Dibuja el juego en el canvas
+            this.load_track_player();
+
+            // Vuelve a llamar a gameLoop para el siguiente cuadro
+            requestAnimationFrame(gameLoop);
+        };
+
+        // Inicia el bucle de juego llamando a gameLoop por primera vez
+        requestAnimationFrame(gameLoop);
     }
 
     load_track_player(){
@@ -42,21 +60,75 @@ class TronGame{
         this.context.fillStyle = `rgb(${this.player1.color.r}, ${this.player1.color.g}, ${this.player1.color.b})`;
         this.context.fillRect(this.player1.x, this.player1.y, this.player1.width, this.player1.height);
 
-// Establece el color de relleno en formato RGB para el cuadrado azul
+        // Establece el color de relleno en formato RGB para el cuadrado azul
         this.context.fillStyle = `rgb(${this.player2.color.r}, ${this.player2.color.g}, ${this.player2.color.b})`;
         this.context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
     }
 
-    move_player1(){
+    move_player1() {
         const position = this.player1;
-
+        // Lógica para mover al jugador 1
+        if (teclado.keyMapPlayer1['ArrowUp']) {
+            position.y -= this.config.speed;
+        } else if (teclado.keyMapPlayer1['ArrowDown']) {
+            position.y += this.config.speed;
+        }
+    
+        if (teclado.keyMapPlayer1['ArrowLeft']) {
+            position.x -= this.config.speed;
+        } else if (teclado.keyMapPlayer1['ArrowRight']) {
+            position.x += this.config.speed;
+        }
+    
+        // Lógica para que el jugador no se salga del canvas
+        if (position.x < 0) {
+            position.x = 0;
+        } else if (position.x + position.width > this.canvas.width) {
+            position.x = this.canvas.width - position.width;
+        }
+    
+        if (position.y < 0) {
+            position.y = 0;
+        } else if (position.y + position.height > this.canvas.height) {
+            position.y = this.canvas.height - position.height;
+        }
     }
+
+    move_player2() {
+        const position = this.player2;
+    
+        if (teclado.keyMapPlayer2['W']) {
+            position.y -= this.config.speed;
+        } else if (teclado.keyMapPlayer2['S']) {
+            position.y += this.config.speed;
+        }
+    
+        if (teclado.keyMapPlayer2['A']) {
+            position.x -= this.config.speed;
+        } else if (teclado.keyMapPlayer2['D']) {
+            position.x += this.config.speed;
+        }
+    
+        if (position.x < 0) {
+            position.x = 0;
+        } else if (position.x + position.width > this.canvas.width) {
+            position.x = this.canvas.width - position.width;
+        }
+    
+        if (position.y < 0) {
+            position.y = 0;
+        } else if (position.y + position.height > this.canvas.height) {
+            position.y = this.canvas.height - position.height;
+        }
+    }
+    
 }
 
 class KeyBoard{
     constructor(game){
         this.game = tron;
 
+        // Declaramos los mandos de los jugadores
         this.keyMapPlayer1 = {};
         this.keyMapPlayer2 = {};
 
@@ -70,7 +142,6 @@ class KeyBoard{
         // Jugador 1
         if (event.key === 'ArrowUp' && !this.keyMapPlayer1['ArrowDown']) {
             this.keyMapPlayer1['ArrowUp'] = true;
-            console.log('estoy presionando flecha arriba');
         } else if (event.key === 'ArrowDown' && !this.keyMapPlayer1['ArrowUp']) {
             this.keyMapPlayer1['ArrowDown'] = true;
         } else if (event.key === 'ArrowLeft' && !this.keyMapPlayer1['ArrowRight']) {
@@ -96,7 +167,6 @@ class KeyBoard{
         // Jugador 1
         if (event.key === 'ArrowUp') {
             this.keyMapPlayer1['ArrowUp'] = false;
-            console.log('estoy soltando flecha arriba');
         } else if (event.key === 'ArrowDown') {
             this.keyMapPlayer1['ArrowDown'] = false;
         } else if (event.key === 'ArrowLeft') {
@@ -105,10 +175,11 @@ class KeyBoard{
             this.keyMapPlayer1['ArrowRight'] = false;
         }
 
+        console.log(event);
+
         // Jugador 2
         if (event.key === 'W') {
             this.keyMapPlayer2['W'] = false;
-            console.log('soy el w del jugador dos');
         } else if (event.key === 'S') {
             this.keyMapPlayer2['S'] = false;
         } else if (event.key === 'A') {
@@ -121,6 +192,5 @@ class KeyBoard{
 
 window.onload = () => {
     tron = new TronGame();
-    tron.load_track_player();
     teclado = new KeyBoard();
 };
