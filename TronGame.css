@@ -1,0 +1,9 @@
+body{
+    background-image: url('tron.jpg');
+    font-family: ter;
+}
+
+canvas{
+    border: red 5px solid;
+    border-radius: 5px;
+}
