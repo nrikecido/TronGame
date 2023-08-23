@@ -32,6 +32,11 @@ class TronGame{
             death: false,
         }
 
+        // Declaramos el array de rastros de ambos jugadores
+        this.player1Trail = [];
+        this.player2Trail = [];
+
+        // Inicializamos el bucle del juego
         this.startGameLoop();
     }
 
@@ -46,7 +51,6 @@ class TronGame{
             // Vuelve a llamar a gameLoop para el siguiente cuadro
             requestAnimationFrame(gameLoop);
         };
-
         // Inicia el bucle de juego llamando a gameLoop por primera vez
         requestAnimationFrame(gameLoop);
     }
@@ -63,6 +67,19 @@ class TronGame{
         // Establece el color de relleno en formato RGB para el cuadrado azul
         this.context.fillStyle = `rgb(${this.player2.color.r}, ${this.player2.color.g}, ${this.player2.color.b})`;
         this.context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
+    
+        // Dibujamos el halo
+        this.context.fillStyle = `rgb(${this.player1.color.r}, ${this.player1.color.g}, ${this.player1.color.b})`;
+        this.player1Trail.forEach((position) => {
+            this.context.fillRect(position.x, position.y, this.player1.width, this.player1.height);
+        });
+
+        this.context.fillStyle = `rgb(${this.player2.color.r}, ${this.player2.color.g}, ${this.player2.color.b})`;
+        this.player2Trail.forEach((position) => {
+            this.context.fillRect(position.x, position.y, this.player2.width, this.player2.height);
+        });
+
+        this.detectCollision();
     }
 
     move_player1() {
@@ -92,6 +109,8 @@ class TronGame{
         } else if (position.y + position.height > this.canvas.height) {
             position.y = this.canvas.height - position.height;
         }
+
+        this.player1Trail.push({x: position.x, y: position.y })
     }
 
     move_player2() {
@@ -120,6 +139,24 @@ class TronGame{
         } else if (position.y + position.height > this.canvas.height) {
             position.y = this.canvas.height - position.height;
         }
+
+        this.player2Trail.push({x: position.x, y: position.y })
+    }
+
+    detectCollision(){
+        // Declaramos variables de las coordenadas de cada uno
+        const car1_X = this.player1.x;
+        const car1_Y = this.player1.y;
+        const car2_X = this.player2.x;
+        const car2_Y = this.player1.y;
+
+        // Establecemos las funciones de detección de color
+        const imageData = this.context.getImageData(car1_X, car1_Y, 1, 1);
+        const imageData2 = this.context.getImageData(car2_X, car2_Y, 1, 1);
+
+        console.log('posición x de 1', car1_X);
+        console.log('jugador 1', imageData);
+        console.log('jugador 2', imageData2);
     }
     
 }
