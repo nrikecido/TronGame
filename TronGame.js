@@ -84,24 +84,25 @@ class TronGame{
 
     move_player1() {
         const position = this.player1;
+
         // Lógica para mover al jugador 1
-        if (teclado.keyMapPlayer1['ArrowUp']) {
+        if (teclado.keyMapPlayer1['38']) {
             position.y -= this.config.speed;
-        } else if (teclado.keyMapPlayer1['ArrowDown']) {
+        } else if (teclado.keyMapPlayer1['40']) {
             position.y += this.config.speed;
         }
     
-        if (teclado.keyMapPlayer1['ArrowLeft']) {
+        if (teclado.keyMapPlayer1['37']) {
             position.x -= this.config.speed;
-        } else if (teclado.keyMapPlayer1['ArrowRight']) {
+        } else if (teclado.keyMapPlayer1['39']) {
             position.x += this.config.speed;
         }
     
         // Lógica para que el jugador no se salga del canvas
         if (position.x < 0) {
-            position.x = 0;
+            position.x = 0; // Límite izquierdo
         } else if (position.x + position.width > this.canvas.width) {
-            position.x = this.canvas.width - position.width;
+            position.x = this.canvas.width - position.width; // Límite derecho
         }
     
         if (position.y < 0) {
@@ -116,15 +117,15 @@ class TronGame{
     move_player2() {
         const position = this.player2;
     
-        if (teclado.keyMapPlayer2['W']) {
+        if (teclado.keyMapPlayer2['87']) {
             position.y -= this.config.speed;
-        } else if (teclado.keyMapPlayer2['S']) {
+        } else if (teclado.keyMapPlayer2['83']) {
             position.y += this.config.speed;
         }
     
-        if (teclado.keyMapPlayer2['A']) {
+        if (teclado.keyMapPlayer2['65']) {
             position.x -= this.config.speed;
-        } else if (teclado.keyMapPlayer2['D']) {
+        } else if (teclado.keyMapPlayer2['68']) {
             position.x += this.config.speed;
         }
     
@@ -143,22 +144,49 @@ class TronGame{
         this.player2Trail.push({x: position.x, y: position.y })
     }
 
-    detectCollision(){
-        // Declaramos variables de las coordenadas de cada uno
-        const car1_X = this.player1.x;
-        const car1_Y = this.player1.y;
-        const car2_X = this.player2.x;
-        const car2_Y = this.player1.y;
+    detectCollision() {
+        // Ajusta las coordenadas para que estén justo afuera del límite del jugador
+        const player1X = this.player1.x + this.player1.width;
+        const player1Y = this.player1.y + this.player1.height;
+        const player2X = this.player2.x + this.player2.width;
+        const player2Y = this.player2.y + this.player2.height;
+    
+        // Obtén el color del jugador 1 en su posición ajustada
+        const player1Color = this.getPlayerColor(player1X, player1Y);
+    
+        // Obtén el color del jugador 2 en su posición ajustada
+        const player2Color = this.getPlayerColor(player2X, player2Y);
+    
+        // Comprueba si el jugador 1 ha colisionado con el color del jugador 2 o el suyo propio
+        if (
+            !this.isBlackColor(player1Color) || // Si el color del jugador 1 no es negro
+            !this.isBlackColor(player2Color) // Si el color del jugador 2 no es negro
+        ) {
+            console.log('has chocado');
+            //Efectos de la muerte: sacar un mensaje y reiniciar el juego
+        }
+    }
 
-        // Establecemos las funciones de detección de color
-        const imageData = this.context.getImageData(car1_X, car1_Y, 1, 1);
-        const imageData2 = this.context.getImageData(car2_X, car2_Y, 1, 1);
-
-        console.log('posición x de 1', car1_X);
-        console.log('jugador 1', imageData);
-        console.log('jugador 2', imageData2);
+    getPlayerColor(x, y) {
+        // Obtén el color en las coordenadas (x, y) utilizando getImageData
+        const imageData = this.context.getImageData(x, y, 1, 1);
+        const pixelData = imageData.data;
+        
+        console.log(pixelData[0]);
+        // El color se encuentra en los componentes rojo (R), verde (G) y azul (B) del píxel
+        const color = {
+            r: pixelData[0],
+            g: pixelData[1],
+            b: pixelData[2]
+        };
+    
+        return color;
     }
     
+    isBlackColor(color) {
+        // Comprueba si un color es negro (R, G y B son 0)
+        return color.r === 0 && color.g === 0 && color.b === 0;
+    }
 }
 
 class KeyBoard{
@@ -177,52 +205,49 @@ class KeyBoard{
 
     handleKeyDown(event) {
         // Jugador 1
-        if (event.key === 'ArrowUp' && !this.keyMapPlayer1['ArrowDown']) {
-            this.keyMapPlayer1['ArrowUp'] = true;
-        } else if (event.key === 'ArrowDown' && !this.keyMapPlayer1['ArrowUp']) {
-            this.keyMapPlayer1['ArrowDown'] = true;
-        } else if (event.key === 'ArrowLeft' && !this.keyMapPlayer1['ArrowRight']) {
-            this.keyMapPlayer1['ArrowLeft'] = true;
-        } else if (event.key === 'ArrowRight' && !this.keyMapPlayer1['ArrowLeft']) {
-            this.keyMapPlayer1['ArrowRight'] = true;
+        if (event.keyCode === 38 && !this.keyMapPlayer1[40]) { // Código 38 corresponde a la tecla 'ArrowUp'
+            this.keyMapPlayer1[38] = true;
+        } else if (event.keyCode === 40 && !this.keyMapPlayer1[38]) { // Código 40 corresponde a la tecla 'ArrowDown'
+            this.keyMapPlayer1[40] = true;
+        } else if (event.keyCode === 37 && !this.keyMapPlayer1[39]) { // Código 37 corresponde a la tecla 'ArrowLeft'
+            this.keyMapPlayer1[37] = true;
+        } else if (event.keyCode === 39 && !this.keyMapPlayer1[37]) { // Código 39 corresponde a la tecla 'ArrowRight'
+            this.keyMapPlayer1[39] = true;
         }
 
         // Jugador 2
-        if (event.key === 'W' && !this.keyMapPlayer2['S']) {
-            this.keyMapPlayer2['W'] = true;
-            console.log('soy el w del jugador dos');
-        } else if (event.key === 'S' && !this.keyMapPlayer2['W']) {
-            this.keyMapPlayer2['S'] = true;
-        } else if (event.key === 'A' && !this.keyMapPlayer2['D']) {
-            this.keyMapPlayer2['A'] = true;
-        } else if (event.key === 'D' && !this.keyMapPlayer2['A']) {
-            this.keyMapPlayer2['D'] = true;
+        if (event.keyCode === 87 && !this.keyMapPlayer2[83]) { // Código 87 corresponde a la tecla 'W'
+            this.keyMapPlayer2[87] = true;
+        } else if (event.keyCode === 83 && !this.keyMapPlayer2[87]) { // Código 83 corresponde a la tecla 'S'
+            this.keyMapPlayer2[83] = true;
+        } else if (event.keyCode === 65 && !this.keyMapPlayer2[68]) { // Código 65 corresponde a la tecla 'A'
+            this.keyMapPlayer2[65] = true;
+        } else if (event.keyCode === 68 && !this.keyMapPlayer2[65]) { // Código 68 corresponde a la tecla 'D'
+            this.keyMapPlayer2[68] = true;
         }
     }
 
     handleKeyUp(event) {
         // Jugador 1
-        if (event.key === 'ArrowUp') {
-            this.keyMapPlayer1['ArrowUp'] = false;
-        } else if (event.key === 'ArrowDown') {
-            this.keyMapPlayer1['ArrowDown'] = false;
-        } else if (event.key === 'ArrowLeft') {
-            this.keyMapPlayer1['ArrowLeft'] = false;
-        } else if (event.key === 'ArrowRight') {
-            this.keyMapPlayer1['ArrowRight'] = false;
+        if (event.keyCode === 38) {
+            this.keyMapPlayer1[38] = false;
+        } else if (event.keyCode === 40) {
+            this.keyMapPlayer1[40] = false;
+        } else if (event.keyCode === 37) {
+            this.keyMapPlayer1[37] = false;
+        } else if (event.keyCode === 39) {
+            this.keyMapPlayer1[39] = false;
         }
 
-        console.log(event);
-
         // Jugador 2
-        if (event.key === 'W') {
-            this.keyMapPlayer2['W'] = false;
-        } else if (event.key === 'S') {
-            this.keyMapPlayer2['S'] = false;
-        } else if (event.key === 'A') {
-            this.keyMapPlayer2['A'] = false;
-        } else if (event.key === 'D') {
-            this.keyMapPlayer2['D'] = false;
+        if (event.keyCode === 87) {
+            this.keyMapPlayer2[87] = false;
+        } else if (event.keyCode === 83) {
+            this.keyMapPlayer2[83] = false;
+        } else if (event.keyCode === 65) {
+            this.keyMapPlayer2[65] = false;
+        } else if (event.keyCode === 68) {
+            this.keyMapPlayer2[68] = false;
         }
     }
 }
@@ -231,3 +256,4 @@ window.onload = () => {
     tron = new TronGame();
     teclado = new KeyBoard();
 };
+
