@@ -1,9 +1,67 @@
 body{
     background-image: url('src/tron.jpg');
-    font-family: ter;
+    font-family: "Orbitron", sans-serif;
+    
 }
 
-canvas{
-    border: red 5px solid;
-    border-radius: 5px;
+canvas {
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+
+h3 {
+    font-family: "Orbitron", sans-serif;
+    font-size: 24px; /* Tamaño de fuente */
+    text-align: center; /* Centrar el texto */
+    text-transform: uppercase;
+    padding: 10px 0; /* Espacio vertical */
+    color: fuchsia; /* Color de texto verde neón */
+    text-shadow: 2px 2px 4px rgba(0, 255, 128, 0.5); /* Sombra de texto */
+}
+
+
+button {
+    background-color: transparent;
+    color: fuchsia; /* Color verde neón */
+    border: 2px solid #00ff80;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-transform: uppercase;
+    font-family: "Orbitron", sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(0, 255, 128, 0.2), transparent);
+    transform: rotate(-45deg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+button:hover {
+    color: #fff; /* Color blanco para el texto al pasar el mouse */
+    border-color: #fff; /* Borde blanco al pasar el mouse */
+}
+
+button:hover::before {
+    opacity: 1;
+}
+
+
+div {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    margin-top: 20px; /* Margen superior para alejar los botones de la parte superior */
 }

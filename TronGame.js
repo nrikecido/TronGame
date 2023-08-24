@@ -12,19 +12,21 @@ class TronGame{
         this.player2 = new Image();
 
         this.player1 = {
-            x: 20,
+            x: 40,
             y: 20,
             width: 10,
             height: 10,
-            color: {r: 227, g: 118, b: 30}
+            color: {r: 227, g: 118, b: 30},
+            direction: "down"
         };
         
         this.player2 = {
-            x: 80,
-            y: 80,
+            x: 20,
+            y: 40,
             width: 10,
             height: 10,
-            color: {r: 36, g: 7, b: 183}
+            color: {r: 36, g: 7, b: 183},
+            direction: "down"
         };
 
         this.config = {
@@ -86,23 +88,23 @@ class TronGame{
         const position = this.player1;
 
         // Lógica para mover al jugador 1
-        if (teclado.keyMapPlayer1['38']) {
+        if (teclado.keyMapPlayer1[38]) { // 38 corresponde a la tecla 'ArrowUp'
             position.y -= this.config.speed;
-        } else if (teclado.keyMapPlayer1['40']) {
+        } else if (teclado.keyMapPlayer1[40]) { // 40 corresponde a la tecla 'ArrowDown'
             position.y += this.config.speed;
         }
     
-        if (teclado.keyMapPlayer1['37']) {
+        if (teclado.keyMapPlayer1[37]) { // 37 corresponde a la tecla 'ArrowLeft'
             position.x -= this.config.speed;
-        } else if (teclado.keyMapPlayer1['39']) {
+        } else if (teclado.keyMapPlayer1[39]) { // 39 corresponde a la tecla 'ArrowRight'
             position.x += this.config.speed;
         }
     
-        // Lógica para que el jugador no se salga del canvas
+        // Restricción de movimiento diagonal
         if (position.x < 0) {
-            position.x = 0; // Límite izquierdo
+            position.x = 0;
         } else if (position.x + position.width > this.canvas.width) {
-            position.x = this.canvas.width - position.width; // Límite derecho
+            position.x = this.canvas.width - position.width;
         }
     
         if (position.y < 0) {
@@ -110,8 +112,8 @@ class TronGame{
         } else if (position.y + position.height > this.canvas.height) {
             position.y = this.canvas.height - position.height;
         }
-
-        this.player1Trail.push({x: position.x, y: position.y })
+    
+        this.player1Trail.push({ x: position.x, y: position.y });
     }
 
     move_player2() {
