@@ -7,13 +7,15 @@
     <script src="TronGame.js"></script>
     <link rel="stylesheet" href="TronGame.css">
 </head>
-<body><h3>TRON GAME</h3>
-    <div>
-        <canvas id="game" class= "game"></canvas>
-        <button id="startButton">Start</button>
-        <button id="restartButton">Restart</button>
+<body>
+    <h3>TRON GAME</h3>
+    <div class="game-container">
+        <canvas id="game" class="game"></canvas>
+        <div class="controls">
+            <button id="startButton">Start</button>
+            <button id="restartButton" hidden>Restart</button>
+            <button id="fullScreen" onclick='document.getElementById("game").requestFullscreen();'>Fullscreen</button>
+        </div>
     </div>
-    
-    
 </body>
 </html>
