@@ -12,19 +12,21 @@ class TronGame{
         this.player2 = new Image();
 
         this.player1 = {
-            x: 20,
+            x: 40,
             y: 20,
             width: 10,
             height: 10,
-            color: {r: 227, g: 118, b: 30}
+            color: {r: 227, g: 118, b: 30},
+            direction: "down"
         };
         
         this.player2 = {
-            x: 80,
-            y: 80,
+            x: 20,
+            y: 40,
             width: 10,
             height: 10,
-            color: {r: 36, g: 7, b: 183}
+            color: {r: 36, g: 7, b: 183},
+            direction: "down"
         };
 
         this.config = {
