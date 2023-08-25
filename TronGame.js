@@ -1,100 +1,91 @@
-class TronGame{
+// ...
 
-    constructor(){
-        // Declaramos el canvas y el contexto 2D
+class TronGame {
+    constructor() {
         this.canvas = document.getElementById("game");
-        this.context = this.canvas.getContext('2d');
+        this.context = this.canvas.getContext("2d");
 
         this.canvas.width = 800;
         this.canvas.height = 500;
 
-        this.player1 = new Image();
-        this.player2 = new Image();
+        this.backgroundImage = new Image();
+        this.backgroundImage.src = 'src/background.jpg';
 
         this.player1 = {
             x: 40,
             y: 20,
             width: 10,
             height: 10,
-            color: {r: 227, g: 118, b: 30},
-            direction: "right"
+            color: { r: 227, g: 118, b: 30 },
+            direction: "right",
         };
-        
+
         this.player2 = {
             x: 750,
             y: 470,
             width: 10,
             height: 10,
-            color: {r: 36, g: 7, b: 183},
-            direction: "left"
+            color: { r: 36, g: 7, b: 183 },
+            direction: "left",
         };
 
         this.config = {
             speed: 2,
             death: false,
-        }
+        };
 
-        // Declaramos el array de rastros de ambos jugadores
-        this.player1Trail = [];
-        this.player2Trail = [];
-
-        // Inicializamos el bucle del juego
-        this.startGameLoop();
+        // Agrega un evento onload para esperar a que la imagen se cargue antes de iniciar el juego
+        this.backgroundImage.onload = () => {
+            this.startGameLoop(); // Comienza la animación después de cargar la imagen de fondo
+        };
     }
 
     startGameLoop() {
+        this.drawBackground();
         const gameLoop = () => {
-        
-            this.move_player1();
-            this.move_player2();
-            // Dibuja el juego en el canvas
-            this.load_track_player();
-
-            // Vuelve a llamar a gameLoop para el siguiente cuadro
+            this.draw();
             requestAnimationFrame(gameLoop);
         };
-        // Inicia el bucle de juego llamando a gameLoop por primera vez
         requestAnimationFrame(gameLoop);
     }
 
-    load_track_player(){
-        // DIbujamos el escenario en el canvas
-        this.context.fillStyle = "black";
-        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Establece el color de relleno en formato RGB para el cuadrado naranja
+    draw() {
+        this.drawBackground();
+        this.drawPlayers();
+        //this.move_player1();
+        this.move_player2();
+        this.detectCollision();
+    }
+
+    drawBackground() {
+        if (!this.context._backgroundDrawn) {
+            this.context.drawImage(this.backgroundImage, 0, 0, this.canvas.width, this.canvas.height);
+            this.context._backgroundDrawn = true;
+        }
+    }
+
+    drawPlayers() {
+        // Dibuja al jugador 1
         this.context.fillStyle = `rgb(${this.player1.color.r}, ${this.player1.color.g}, ${this.player1.color.b})`;
         this.context.fillRect(this.player1.x, this.player1.y, this.player1.width, this.player1.height);
 
-        // Establece el color de relleno en formato RGB para el cuadrado azul
+        // Dibuja al jugador 2
         this.context.fillStyle = `rgb(${this.player2.color.r}, ${this.player2.color.g}, ${this.player2.color.b})`;
         this.context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
-    
-        // Dibujamos el halo
-        this.context.fillStyle = `rgb(${this.player1.color.r}, ${this.player1.color.g}, ${this.player1.color.b})`;
-        this.player1Trail.forEach((position) => {
-            this.context.fillRect(position.x, position.y, this.player1.width, this.player1.height);
-        });
-
-        this.context.fillStyle = `rgb(${this.player2.color.r}, ${this.player2.color.g}, ${this.player2.color.b})`;
-        this.player2Trail.forEach((position) => {
-            this.context.fillRect(position.x, position.y, this.player2.width, this.player2.height);
-        });
-
-        this.detectCollision();
+        
     }
 
     move_player1() {
         const position = this.player1;
-    
+        
         // Lógica para mover al jugador 1
-        if (teclado.keyMapPlayer1[38] && position.direction !== "down") { // Tecla 'ArrowUp'
+        if (teclado.keyMapPlayer2[87] && position.direction !== "down") { // Tecla 'W' (jugador 2)
             position.direction = "up";
-        } else if (teclado.keyMapPlayer1[40] && position.direction !== "up") { // Tecla 'ArrowDown'
+        } else if (teclado.keyMapPlayer2[83] && position.direction !== "up") { // Tecla 'S' (jugador 2)
             position.direction = "down";
-        } else if (teclado.keyMapPlayer1[37] && position.direction !== "right") { // Tecla 'ArrowLeft'
+        } else if (teclado.keyMapPlayer2[65] && position.direction !== "right") { // Tecla 'A' (jugador 2)
             position.direction = "left";
-        } else if (teclado.keyMapPlayer1[39] && position.direction !== "left") { // Tecla 'ArrowRight'
+        } else if (teclado.keyMapPlayer2[68] && position.direction !== "left") { // Tecla 'D' (jugador 2)
             position.direction = "right";
         }
     
@@ -108,21 +99,19 @@ class TronGame{
         } else if (position.direction === "right") {
             position.x += this.config.speed;
         }
-        // Dibujas el halo
-        this.player1Trail.push({ x: position.x, y: position.y });
     }
     
     move_player2() {
         const position = this.player2;
-    
+        
         // Lógica para mover al jugador 2
-        if (teclado.keyMapPlayer2[87] && position.direction !== "down") { // Tecla 'W'
+        if (teclado.keyMapPlayer1[38] && position.direction !== "down") { // Tecla 'ArrowUp' (jugador 1)
             position.direction = "up";
-        } else if (teclado.keyMapPlayer2[83] && position.direction !== "up") { // Tecla 'S'
+        } else if (teclado.keyMapPlayer1[40] && position.direction !== "up") { // Tecla 'ArrowDown' (jugador 1)
             position.direction = "down";
-        } else if (teclado.keyMapPlayer2[65] && position.direction !== "right") { // Tecla 'A'
+        } else if (teclado.keyMapPlayer1[37] && position.direction !== "right") { // Tecla 'ArrowLeft' (jugador 1)
             position.direction = "left";
-        } else if (teclado.keyMapPlayer2[68] && position.direction !== "left") { // Tecla 'D'
+        } else if (teclado.keyMapPlayer1[39] && position.direction !== "left") { // Tecla 'ArrowRight' (jugador 1)
             position.direction = "right";
         }
     
@@ -136,42 +125,41 @@ class TronGame{
         } else if (position.direction === "right") {
             position.x += this.config.speed;
         }
-
-        this.player2Trail.push({ x: position.x, y: position.y });
     }
     
+
     detectCollision() {
-        // Ajusta las coordenadas para que estén justo afuera del límite del jugador
-        const player1X = this.player1.x + this.player1.width;
-        const player1Y = this.player1.y + this.player1.height;
-        const player2X = this.player2.x + this.player2.width;
-        const player2Y = this.player2.y + this.player2.height;
+        const player1X = this.player1.x / 2;
+        const player1Y = this.player1.y / 2;
+        const player2X = this.player2.x / 2;
+        const player2Y = this.player2.y / 2;
     
+        // Obtén los colores de los jugadores en sus posiciones actuales
+        const player1Color = this.getPlayerColor(player1X, player1Y);
+        const player2Color = this.getPlayerColor(player2X, player2Y);
+    
+        // Comprueba si los jugadores han colisionado con los bordes del canvas
         if (
-            player1X >= this.canvas.width || // Colisión con el borde derecho
             player1X <= 0 || // Colisión con el borde izquierdo
-            player1Y >= this.canvas.height || // Colisión con el borde inferior
+            player1X >= this.canvas.width || // Colisión con el borde derecho
             player1Y <= 0 || // Colisión con el borde superior
-            !this.isBlackColor(this.getPlayerColor(player1X, player1Y)) // Colisión con el color
+            player1Y >= this.canvas.height // Colisión con el borde inferior
         ) {
-        
+            console.log('colision'); // Marca al jugador 1 como muerto
         }
     
         if (
-            player2X >= this.canvas.width ||
-            player2X <= 0 || 
-            player2Y >= this.canvas.height ||
-            player2Y <= 0 ||
-            !this.isBlackColor(this.getPlayerColor(player2X, player2Y))
+            player2X <= 0 || // Colisión con el borde izquierdo
+            player2X >= this.canvas.width || // Colisión con el borde derecho
+            player2Y <= 0 || // Colisión con el borde superior
+            player2Y >= this.canvas.height // Colisión con el borde inferior
         ) {
-            this.config.death = true;
-            this.isCollision();
+            console.log('colision');    // Marca al jugador 2 como muerto
         }
-    }
-
-    isCollision(){
-        if (this.config.death === true){
-            alert('Se acabó el juego');
+    
+        // Comprueba si los jugadores han colisionado con los colores de los rastros
+        if (!this.isBlackColor(player1Color) || !this.isBlackColor(player2Color)) {
+            console.log('colisión detectada'); // Marca al jugador 1 o jugador 2 como muerto
         }
     }
 
@@ -179,17 +167,17 @@ class TronGame{
         // Obtén el color en las coordenadas (x, y) utilizando getImageData
         const imageData = this.context.getImageData(x, y, 1, 1);
         const pixelData = imageData.data;
-        
-        console.log(pixelData[0]);
+
         // El color se encuentra en los componentes rojo (R), verde (G) y azul (B) del píxel
         const color = {
             r: pixelData[0],
             g: pixelData[1],
             b: pixelData[2]
         };
+        console.log(pixelData[0], pixelData[1], pixelData[2]);
         return color;
     }
-    
+
     isBlackColor(color) {
         // Comprueba si un color es negro (R, G y B son 0)
         return color.r === 0 && color.g === 0 && color.b === 0;
@@ -207,7 +195,6 @@ class KeyBoard{
         // Asigna los eventos de teclado
         document.addEventListener('keydown', (event) => this.handleKeyDown(event));
         document.addEventListener('keyup', (event) => this.handleKeyUp(event));
-
     }
 
     handleKeyDown(event) {
@@ -258,14 +245,12 @@ class KeyBoard{
         }
     }
 }
-
 let game;
 let teclado;
 
 document.addEventListener("DOMContentLoaded", function() {
     // Obtén una referencia al botón
     const startButton = document.getElementById("startButton");
-    const restartButton = document.getElementById("restartButton");
 
     // Registra un evento de clic para el botón "Empezar juego"
     startButton.addEventListener("click", function() {
@@ -273,7 +258,6 @@ document.addEventListener("DOMContentLoaded", function() {
         tron = new TronGame();
         teclado = new KeyBoard();
 
-        startButton.style.display = "none";
-        restartButton.style.display = "block";
+        startButton.style.display = "none"; // Oculta el botón después de iniciar el juego
     });
 });
