@@ -1,5 +1,3 @@
-// ...
-
 class TronGame {
     constructor() {
         this.canvas = document.getElementById("game");
@@ -34,9 +32,8 @@ class TronGame {
             death: false,
         };
 
-        // Agrega un evento onload para esperar a que la imagen se cargue antes de iniciar el juego
         this.backgroundImage.onload = () => {
-            this.startGameLoop(); // Comienza la animación después de cargar la imagen de fondo
+            this.startGameLoop();
         };
     }
 
@@ -52,7 +49,6 @@ class TronGame {
     draw() {
         this.drawBackground();
         this.drawPlayers();
-        //this.move_player1();
         this.move_player2();
         this.detectCollision();
     }
@@ -65,31 +61,26 @@ class TronGame {
     }
 
     drawPlayers() {
-        // Dibuja al jugador 1
         this.context.fillStyle = `rgb(${this.player1.color.r}, ${this.player1.color.g}, ${this.player1.color.b})`;
         this.context.fillRect(this.player1.x, this.player1.y, this.player1.width, this.player1.height);
 
-        // Dibuja al jugador 2
         this.context.fillStyle = `rgb(${this.player2.color.r}, ${this.player2.color.g}, ${this.player2.color.b})`;
         this.context.fillRect(this.player2.x, this.player2.y, this.player2.width, this.player2.height);
-        
     }
 
     move_player1() {
         const position = this.player1;
         
-        // Lógica para mover al jugador 1
-        if (teclado.keyMapPlayer2[87] && position.direction !== "down") { // Tecla 'W' (jugador 2)
+        if (teclado.keyMapPlayer2[87] && position.direction !== "down") {
             position.direction = "up";
-        } else if (teclado.keyMapPlayer2[83] && position.direction !== "up") { // Tecla 'S' (jugador 2)
+        } else if (teclado.keyMapPlayer2[83] && position.direction !== "up") {
             position.direction = "down";
-        } else if (teclado.keyMapPlayer2[65] && position.direction !== "right") { // Tecla 'A' (jugador 2)
+        } else if (teclado.keyMapPlayer2[65] && position.direction !== "right") {
             position.direction = "left";
-        } else if (teclado.keyMapPlayer2[68] && position.direction !== "left") { // Tecla 'D' (jugador 2)
+        } else if (teclado.keyMapPlayer2[68] && position.direction !== "left") {
             position.direction = "right";
         }
     
-        // Mover el jugador en la dirección actual
         if (position.direction === "up") {
             position.y -= this.config.speed;
         } else if (position.direction === "down") {
@@ -104,18 +95,16 @@ class TronGame {
     move_player2() {
         const position = this.player2;
         
-        // Lógica para mover al jugador 2
-        if (teclado.keyMapPlayer1[38] && position.direction !== "down") { // Tecla 'ArrowUp' (jugador 1)
+        if (teclado.keyMapPlayer1[38] && position.direction !== "down") {
             position.direction = "up";
-        } else if (teclado.keyMapPlayer1[40] && position.direction !== "up") { // Tecla 'ArrowDown' (jugador 1)
+        } else if (teclado.keyMapPlayer1[40] && position.direction !== "up") {
             position.direction = "down";
-        } else if (teclado.keyMapPlayer1[37] && position.direction !== "right") { // Tecla 'ArrowLeft' (jugador 1)
+        } else if (teclado.keyMapPlayer1[37] && position.direction !== "right") {
             position.direction = "left";
-        } else if (teclado.keyMapPlayer1[39] && position.direction !== "left") { // Tecla 'ArrowRight' (jugador 1)
+        } else if (teclado.keyMapPlayer1[39] && position.direction !== "left") {
             position.direction = "right";
         }
     
-        // Mover el jugador en la dirección actual
         if (position.direction === "up") {
             position.y -= this.config.speed;
         } else if (position.direction === "down") {
@@ -126,7 +115,6 @@ class TronGame {
             position.x += this.config.speed;
         }
     }
-    
 
     detectCollision() {
         const player1X = this.player1.x / 2;
@@ -134,41 +122,36 @@ class TronGame {
         const player2X = this.player2.x / 2;
         const player2Y = this.player2.y / 2;
     
-        // Obtén los colores de los jugadores en sus posiciones actuales
         const player1Color = this.getPlayerColor(player1X, player1Y);
         const player2Color = this.getPlayerColor(player2X, player2Y);
     
-        // Comprueba si los jugadores han colisionado con los bordes del canvas
         if (
-            player1X <= 0 || // Colisión con el borde izquierdo
-            player1X >= this.canvas.width || // Colisión con el borde derecho
-            player1Y <= 0 || // Colisión con el borde superior
-            player1Y >= this.canvas.height // Colisión con el borde inferior
+            player1X <= 0 ||
+            player1X >= this.canvas.width ||
+            player1Y <= 0 ||
+            player1Y >= this.canvas.height
         ) {
-            console.log('colision'); // Marca al jugador 1 como muerto
+            console.log('colision');
         }
     
         if (
-            player2X <= 0 || // Colisión con el borde izquierdo
-            player2X >= this.canvas.width || // Colisión con el borde derecho
-            player2Y <= 0 || // Colisión con el borde superior
-            player2Y >= this.canvas.height // Colisión con el borde inferior
+            player2X <= 0 ||
+            player2X >= this.canvas.width ||
+            player2Y <= 0 ||
+            player2Y >= this.canvas.height
         ) {
-            console.log('colision');    // Marca al jugador 2 como muerto
+            console.log('colision');
         }
     
-        // Comprueba si los jugadores han colisionado con los colores de los rastros
         if (!this.isBlackColor(player1Color) || !this.isBlackColor(player2Color)) {
-            console.log('colisión detectada'); // Marca al jugador 1 o jugador 2 como muerto
+            console.log('colisión detectada');
         }
     }
 
     getPlayerColor(x, y) {
-        // Obtén el color en las coordenadas (x, y) utilizando getImageData
         const imageData = this.context.getImageData(x, y, 1, 1);
         const pixelData = imageData.data;
 
-        // El color se encuentra en los componentes rojo (R), verde (G) y azul (B) del píxel
         const color = {
             r: pixelData[0],
             g: pixelData[1],
@@ -179,26 +162,22 @@ class TronGame {
     }
 
     isBlackColor(color) {
-        // Comprueba si un color es negro (R, G y B son 0)
         return color.r === 0 && color.g === 0 && color.b === 0;
     }
 }
 
-class KeyBoard{
-    constructor(game){
+class KeyBoard {
+    constructor(game) {
         this.game = tron;
 
-        // Declaramos los mandos de los jugadores
         this.keyMapPlayer1 = {};
         this.keyMapPlayer2 = {};
 
-        // Asigna los eventos de teclado
         document.addEventListener('keydown', (event) => this.handleKeyDown(event));
         document.addEventListener('keyup', (event) => this.handleKeyUp(event));
     }
 
     handleKeyDown(event) {
-        // Jugador 1
         if (event.keyCode === 38 && !this.keyMapPlayer1[40]) { 
             this.keyMapPlayer1[38] = true;
         } else if (event.keyCode === 40 && !this.keyMapPlayer1[38]) {
@@ -209,7 +188,6 @@ class KeyBoard{
             this.keyMapPlayer1[39] = true;
         }
 
-        // Jugador 2
         if (event.keyCode === 87 && !this.keyMapPlayer2[83]) { 
             this.keyMapPlayer2[87] = true;
         } else if (event.keyCode === 83 && !this.keyMapPlayer2[87]) { 
@@ -222,7 +200,6 @@ class KeyBoard{
     }
 
     handleKeyUp(event) {
-        // Jugador 1
         if (event.keyCode === 38) {
             this.keyMapPlayer1[38] = false;
         } else if (event.keyCode === 40) {
@@ -233,7 +210,6 @@ class KeyBoard{
             this.keyMapPlayer1[39] = false;
         }
 
-        // Jugador 2
         if (event.keyCode === 87) {
             this.keyMapPlayer2[87] = false;
         } else if (event.keyCode === 83) {
@@ -245,19 +221,17 @@ class KeyBoard{
         }
     }
 }
+
 let game;
 let teclado;
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Obtén una referencia al botón
     const startButton = document.getElementById("startButton");
 
-    // Registra un evento de clic para el botón "Empezar juego"
     startButton.addEventListener("click", function() {
-        // Crea una instancia del juego
         tron = new TronGame();
         teclado = new KeyBoard();
 
-        startButton.style.display = "none"; // Oculta el botón después de iniciar el juego
+        startButton.style.display = "none";
     });
 });
