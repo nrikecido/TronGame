@@ -71,3 +71,25 @@ div {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
     margin-top: 20px; /* Margen superior para alejar los botones de la parte superior */
 }
+
+.neon-text {
+    font-size: 3rem;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    color: transparent;
+    text-align: center;
+    position: relative;
+    animation: neon 1.5s ease-in-out infinite alternate;
+}
+
+/* Animación de neón */
+@keyframes neon {
+    0% {
+        text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc, 0 0 15px #00ffcc;
+        opacity: 0.8;
+    }
+    100% {
+        text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc, 0 0 30px #00ffcc;
+        opacity: 1;
+    }
+}
