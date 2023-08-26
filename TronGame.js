@@ -49,6 +49,7 @@ class TronGame {
     draw() {
         this.drawBackground();
         this.drawPlayers();
+        this.move_player1();
         this.move_player2();
         this.detectCollision();
     }
@@ -126,25 +127,29 @@ class TronGame {
         const player2Color = this.getPlayerColor(player2X, player2Y);
     
         if (
-            player1X <= 0 ||
-            player1X >= this.canvas.width ||
-            player1Y <= 0 ||
-            player1Y >= this.canvas.height
+            this.player1.x <= 0 ||
+            this.player1.x >= this.canvas.width ||
+            this.player1.y <= 0 ||
+            this.player1.y >= this.canvas.height
         ) {
-            console.log('colision');
+            console.log('Colisión jugador 1');
         }
     
         if (
-            player2X <= 0 ||
-            player2X >= this.canvas.width ||
-            player2Y <= 0 ||
-            player2Y >= this.canvas.height
+            this.player2.x <= 0 ||
+            this.player2.x >= this.canvas.width ||
+            this.player2.y <= 0 ||
+            this.player2.y >= this.canvas.height
         ) {
-            console.log('colision');
+            console.log('Colisión jugador 2');
         }
     
-        if (!this.isBlackColor(player1Color) || !this.isBlackColor(player2Color)) {
-            console.log('colisión detectada');
+        if (this.colorsMatch(player1Color, this.player2.color)) {
+            console.log('Colisión detectada con el color de Player 1');
+        }
+    
+        if (this.colorsMatch(player2Color, this.player1.color)) {
+            console.log('Colisión detectada con el color de Player 2');
         }
     }
 
@@ -161,8 +166,12 @@ class TronGame {
         return color;
     }
 
-    isBlackColor(color) {
-        return color.r === 0 && color.g === 0 && color.b === 0;
+    colorsMatch(color1, color2) {
+        return (
+            color1.r === color2.r &&
+            color1.g === color2.g &&
+            color1.b === color2.b
+        );
     }
 }
 
@@ -221,7 +230,6 @@ class KeyBoard {
         }
     }
 }
-
 let game;
 let teclado;
 
@@ -233,5 +241,7 @@ document.addEventListener("DOMContentLoaded", function() {
         teclado = new KeyBoard();
 
         startButton.style.display = "none";
+
+
     });
 });
